@@ -1,10 +1,12 @@
-// server.js
+// backend/server.js
 const express = require("express");
 const cors = require("cors");
 const calculateCommission = require("./commission");
 
 const app = express();
-app.use(cors());
+
+// อนุญาตให้ Frontend จาก Netlify เรียกใช้งานได้
+app.use(cors()); 
 app.use(express.json());
 
 const PRICE = {
@@ -16,7 +18,6 @@ const PRICE = {
 app.post("/api/calc", (req, res) => {
   const { stock = 0, lock = 0, barrel = 0 } = req.body;
 
-  // validate numeric
   const s = Number(stock) || 0;
   const l = Number(lock) || 0;
   const b = Number(barrel) || 0;
@@ -35,5 +36,6 @@ app.post("/api/calc", (req, res) => {
   });
 });
 
-const port = process.env.PORT || 5000;
-app.listen(port, () => console.log(`Backend running: http://localhost:${port}`));
+// ใช้ PORT จาก Environment Variable ที่ Cloud (Render) กำหนดให้
+const PORT = process.env.PORT || 5000;
+app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
