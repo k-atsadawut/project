@@ -1,8 +1,25 @@
-export async function calculateAPI(payload) {
-  const res = await fetch("http://localhost:5000/api/calc", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(payload),
-  });
-  return res.json();
-}
+const onConfirm = async () => {
+  if (!validate()) return alert("กรุณาตรวจสอบค่าให้อยู่ในช่วงที่กำหนด");
+
+  setLoading(true);
+  // จำลองการโหลดเล็กน้อยเพื่อให้ดูเหมือนเรียก API
+  setTimeout(() => {
+    saveHistory({
+      date: new Date().toLocaleString(),
+      name: form.name,
+      stock,
+      lock,
+      barrel,
+      priceStock: form.priceStock,
+      priceLock: form.priceLock,
+      priceBarrel: form.priceBarrel,
+      sales: localSales,
+      commission: localCommission,
+      total: localTotal,
+    });
+
+    setResult({ ok: true }); 
+    setShowCalculated(true);
+    setLoading(false);
+  }, 500);
+};
