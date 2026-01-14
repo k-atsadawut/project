@@ -204,7 +204,7 @@
 
         {/* Page 2 */}
         {page === 2 && (
-          <div className="relative bg-white shadow-xl rounded-2xl p-10 w-[850px]">
+          <div className="relative bg-white shadow-xl rounded-2xl p-6 sm:p-10 w-full max-w-4xl mx-4">
 
 
 
@@ -220,7 +220,7 @@
 
 
 
-            <div className="grid grid-cols-2 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
 
 
 
@@ -247,7 +247,7 @@
                     <span>lock</span>
                     <span>ราคา/หน่วย</span>
                   </div>
-                  <div className="flex gap-3">
+                  <div className="flex flex-col sm:flex-row gap-3">
                     <input
                       type="number"
                       name="lock"
@@ -278,7 +278,7 @@
                     <span>stock</span>
                     <span>ราคา/หน่วย</span>
                   </div>
-                  <div className="flex gap-3">
+                  <div className="flex flex-col sm:flex-row gap-3">
                     <input
                       type="number"
                       name="stock"
@@ -309,7 +309,7 @@
                     <span>barrel</span>
                     <span>ราคา/หน่วย</span>
                   </div>
-                  <div className="flex gap-3">
+                  <div className="flex flex-col sm:flex-row gap-3">
                     <input
                       type="number"
                       name="barrel"
@@ -376,7 +376,7 @@
 
 
             {/* FOOTER BUTTON */}
-            <div className="flex justify-between mt-8">
+            <div className="flex flex-col sm:flex-row sm:justify-between mt-8 gap-3">
               <button
                 onClick={onConfirm}
                 className="bg-blue-600 text-white px-6 py-2 rounded-lg"
@@ -421,7 +421,7 @@
         {/* History Modal */}
         {showHistory && (
           <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
-            <div className="bg-white rounded-lg p-6 w-[600px] max-h-[500px] overflow-auto shadow-xl">
+            <div className="bg-white rounded-lg p-6 w-full max-w-3xl max-h-[70vh] overflow-auto shadow-xl mx-4">
               <h3 className="text-lg font-semibold mb-4">ประวัติการคำนวณ</h3>
 
 
@@ -493,7 +493,7 @@
         {/* Clear History Confirm Modal */}
         {showClearConfirm && (
           <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
-            <div className="bg-white rounded-lg p-6 w-[400px] shadow-xl">
+            <div className="bg-white rounded-lg p-6 w-full max-w-md shadow-xl mx-4">
               <h3 className="text-lg font-semibold mb-4">ยืนยันการล้างประวัติ</h3>
               <p className="text-sm text-gray-600 mb-6">คุณต้องการล้างประวัติการคำนวณทั้งหมดใช่หรือไม่? การกระทำนี้ไม่สามารถยกเลิกได้</p>
 
