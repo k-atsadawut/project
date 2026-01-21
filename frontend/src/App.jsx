@@ -32,8 +32,8 @@
 
 
 
-    const [result, setResult] = useState(null);
-    const [loading, setLoading] = useState(false);
+   
+   
     const [errors, setErrors] = useState({});
     const [showCalculated, setShowCalculated] = useState(false);
 
@@ -101,11 +101,11 @@
 
     const calculateCommissionLocal = (sales) => {
       if (sales >= 1800) {
-        return 0.10 * 1000 + 0.15 * 800 + 0.20 * (sales - 1800);
+        return 0.1 * 1000 + 0.15 * 800 + 0.2 * (sales - 1800);
       } else if (sales >= 1000) {
-        return 0.10 * 1000 + 0.15 * (sales - 1000);
+        return 0.1 * 1000 + 0.15 * (sales - 1000);
       } else {
-        return sales * 0.10;
+        return sales * 0.1;
       }
     };
 
