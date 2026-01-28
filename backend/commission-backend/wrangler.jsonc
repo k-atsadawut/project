@@ -1,5 +1,8 @@
 {
   "name": "commission-backend",
+  "main": "src/index.js",
   "compatibility_date": "2026-01-28",
-  "main": "src/index.js"
+  "vars": {
+    "ENV": "production"
+  }
 }

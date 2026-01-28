@@ -1,0 +1,6 @@
+name = "commission-backend"
+main = "src/index.js"
+compatibility_date = "2026-01-28"
+
+[vars]
+ENV = "production"
