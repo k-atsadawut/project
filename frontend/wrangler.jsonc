@@ -1,4 +1,5 @@
 {
   "name": "commission-frontend",
-  "pages_build_output_dir": "dist"
+  "pages_build_output_dir": "dist",
+  "_note": "cloudflare pages config"
 }
