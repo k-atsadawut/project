@@ -16,8 +16,8 @@
 
   export default function App() {
     const [page, setPage] = useState(2);
-
-
+    const [loading, setLoading] = useState(false);
+    const [result, setResult] = useState(null);
 
     const [form, setForm] = useState({
       name: "",
@@ -29,16 +29,8 @@
       priceBarrel: 25,
     });
 
-
-
-
-   
-   
     const [errors, setErrors] = useState({});
     const [showCalculated, setShowCalculated] = useState(false);
-
-
-
 
     const [history, setHistory] = useState([]);
     const [showHistory, setShowHistory] = useState(false);
@@ -380,7 +372,7 @@
               <button
                 onClick={onConfirm}
                 className="bg-blue-600 text-white px-6 py-2 rounded-lg"
-                disabled={Object.keys(errors).length > 0 || (form.stock === "" && form.lock === "" && form.barrel === "")}
+                disabled={!form.name.trim() || Object.keys(errors).length > 0 || (form.stock === "" && form.lock === "" && form.barrel === "")}
               >
                 คำนวณ
               </button>
