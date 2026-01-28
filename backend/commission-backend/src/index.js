@@ -1,4 +1,4 @@
-const ALLOWED_ORIGIN = "*";
+const ALLOWED_ORIGIN = "https://commission-frontend1.pages.dev";
 
 const PRICE = {
   stock: 30,
@@ -16,29 +16,20 @@ const calculateCommission = (sales) => {
   }
 };
 
-const corsHeaders = {
-  "Access-Control-Allow-Origin": ALLOWED_ORIGIN,
-  "Access-Control-Allow-Methods": "GET,POST,OPTIONS",
-  "Access-Control-Allow-Headers": "Content-Type",
-  "Content-Type": "application/json",
-};
-
 export default {
   async fetch(req) {
-    const url = new URL(req.url);
-
-    // CORS preflight
+    // CORS preflight for OPTIONS
     if (req.method === "OPTIONS") {
-      return new Response(null, { headers: corsHeaders });
+      return new Response(null, {
+        headers: {
+          "Access-Control-Allow-Origin": ALLOWED_ORIGIN,
+          "Access-Control-Allow-Methods": "POST,OPTIONS",
+          "Access-Control-Allow-Headers": "Content-Type",
+        },
+      });
     }
 
-    // Health check
-    if (url.pathname === "/" || url.pathname === "/api/health") {
-      return Response.json(
-        { status: "ok" },
-        { headers: corsHeaders }
-      );
-    }
+    const url = new URL(req.url);
 
     // Commission calculation
     if (url.pathname === "/api/calc" && req.method === "POST") {
@@ -53,22 +44,30 @@ export default {
         const commission = calculateCommission(sales);
         const total = sales + commission;
 
-        return Response.json(
-          {
-            ok: true,
-            price: PRICE,
-            inputs: { stock: s, lock: l, barrel: b },
-            sales,
-            commission,
-            total,
+        return new Response(JSON.stringify({
+          ok: true,
+          price: PRICE,
+          inputs: { stock: s, lock: l, barrel: b },
+          sales,
+          commission,
+          total,
+        }), {
+          headers: {
+            "Content-Type": "application/json",
+            "Access-Control-Allow-Origin": ALLOWED_ORIGIN,
           },
-          { headers: corsHeaders }
-        );
+        });
       } catch (err) {
-        return Response.json(
-          { ok: false, error: err.message },
-          { status: 400, headers: corsHeaders }
-        );
+        return new Response(JSON.stringify({
+          ok: false,
+          error: err.message,
+        }), {
+          status: 400,
+          headers: {
+            "Content-Type": "application/json",
+            "Access-Control-Allow-Origin": ALLOWED_ORIGIN,
+          },
+        });
       }
     }
 
