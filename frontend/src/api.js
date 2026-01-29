@@ -1,5 +1,5 @@
 export async function calculateAPI(payload) {
-  const base = import.meta.env.VITE_API_BASE;
+  const base = import.meta.env.VITE_API_BASE || "https://qa-backend.sidksuug.workers.dev";
   console.log("API_BASE =", base);
 
   const res = await fetch(`${base}/api/calc`, {
