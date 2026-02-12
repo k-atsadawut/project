@@ -32,7 +32,7 @@ export default function App() {
     commission: 0,
     total: 0
   });
-
+  const [submitted, setSubmitted] = useState(false);
   const [history, setHistory] = useState([]);
   const [showHistory, setShowHistory] = useState(false);
   const [showClearConfirm, setShowClearConfirm] = useState(false);
@@ -49,8 +49,8 @@ export default function App() {
   const validate = () => {
     const e = {};
     if (!form.name.trim()) e.name = "กรุณากรอกชื่อพนักงาน";
-    if (form.stock !== "" && (form.stock < 1 || form.stock > 70)) e.stock = "1-70";
-    if (form.lock !== "" && (form.lock < 1 || form.lock > 80)) e.lock = "1-80";
+    if (form.stock !== "" && (form.stock < 1 || form.stock > 80)) e.stock = "1-80";
+    if (form.lock !== "" && (form.lock < 1 || form.lock > 70)) e.lock = "1-70";
     if (form.barrel !== "" && (form.barrel < 1 || form.barrel > 90)) e.barrel = "1-90";
     setErrors(e);
     return Object.keys(e).length === 0;
@@ -98,61 +98,71 @@ export default function App() {
     setCalculatedValues({ sales: 0, commission: 0, total: 0 });
   };
 
-  const onConfirm = async () => {
-    if (!validate()) return alert("กรุณาตรวจสอบค่าให้อยู่ในช่วงที่กำหนด");
+ const onConfirm = async () => {
+  setSubmitted(true);
 
-    // ✅ คำนวณค่าเมื่อกดปุ่ม "คำนวณ" เท่านั้น
-    const stock = form.stock === "" ? 0 : form.stock;
-    const lock = form.lock === "" ? 0 : form.lock;
-    const barrel = form.barrel === "" ? 0 : form.barrel;
+  const e = {};
 
-    const localSales =
-      stock * form.priceStock +
-      lock * form.priceLock +
-      barrel * form.priceBarrel;
+  if (!form.name.trim()) e.name = "กรุณากรอกชื่อพนักงาน";
+  if (form.stock === "") e.stock = "กรุณากรอกจำนวน stock : 1-80";
+  if (form.lock === "") e.lock = "กรุณากรอกจำนวน lock : 1-70";
+  if (form.barrel === "") e.barrel = "กรุณากรอกจำนวน barrel : 1-90";
 
-    const localCommission = calculateCommissionLocal(localSales);
-    const localTotal = localSales + localCommission;
+  // เช็กช่วงค่า (ใช้ของเดิม)
+  if (form.stock !== "" && (form.stock < 1 || form.stock > 80)) e.stock = "1-80";
+  if (form.lock !== "" && (form.lock < 1 || form.lock > 70)) e.lock = "1-70";
+  if (form.barrel !== "" && (form.barrel < 1 || form.barrel > 90)) e.barrel = "1-90";
 
-    setLoading(true);
-    try {
-      const res = await calculateAPI({ stock, lock, barrel });
+  setErrors(e);
 
-      if (res.ok) {
-        // ✅ เก็บค่าที่คำนวณแล้วใน state
-        setCalculatedValues({
-          sales: localSales,
-          commission: localCommission,
-          total: localTotal
-        });
+  if (Object.keys(e).length > 0) return; // ❌ หยุดคำนวณทันที
 
-        saveHistory({
-          date: new Date().toLocaleString(),
-          name: form.name,
-          stock,
-          lock,
-          barrel,
-          priceStock: form.priceStock,
-          priceLock: form.priceLock,
-          priceBarrel: form.priceBarrel,
-          sales: localSales,
-          commission: localCommission,
-          total: localTotal,
-        });
+  // ===============================
+  // คำนวณ (ของเดิมแทบไม่ต้องแตะ)
+  // ===============================
+  const stock = form.stock;
+  const lock = form.lock;
+  const barrel = form.barrel;
 
-        setResult(res);
-        setShowCalculated(true);
-        setPage(2);
-      } else {
-        alert("เกิดข้อผิดพลาดจากเซิร์ฟเวอร์");
-      }
-    } catch (err) {
-      console.error(err);
-      alert("ไม่สามารถเชื่อมต่อ backend ได้");
-    } finally {
-      setLoading(false);
+  const localSales =
+    stock * form.priceStock +
+    lock * form.priceLock +
+    barrel * form.priceBarrel;
+
+  const localCommission = calculateCommissionLocal(localSales);
+  const localTotal = localSales + localCommission;
+
+  setLoading(true);
+  try {
+    const res = await calculateAPI({ stock, lock, barrel });
+
+    if (res.ok) {
+      setCalculatedValues({
+        sales: localSales,
+        commission: localCommission,
+        total: localTotal,
+      });
+
+      saveHistory({
+        date: new Date().toLocaleString(),
+        name: form.name,
+        stock,
+        lock,
+        barrel,
+        priceStock: form.priceStock,
+        priceLock: form.priceLock,
+        priceBarrel: form.priceBarrel,
+        sales: localSales,
+        commission: localCommission,
+        total: localTotal,
+      });
+
+      setShowCalculated(true);
     }
-  };
+  } finally {
+    setLoading(false);
+  }
+};
 
   return (
     <div className="w-full min-h-screen flex items-center justify-center p-6 bg-gray-100">
@@ -164,7 +174,9 @@ export default function App() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {/* Left Column */}
             <div>
-              <label className="text-sm">ชื่อพนักงาน</label>
+              <label className="text-sm">
+                ชื่อพนักงาน <span className="text-red-500">*</span>
+              </label>
               <input
                 type="text"
                 name="name"
@@ -189,7 +201,7 @@ export default function App() {
                     onChange={handleChange}
                     onKeyDown={preventDecimal}
                     className={`w-full p-2 border rounded ${errors.lock ? "border-red-400" : ""}`}
-                    placeholder="1-80"
+                    placeholder="1-70"
                   />
                   <input
                     type="number"
@@ -200,7 +212,7 @@ export default function App() {
                     className="w-24 p-2 border rounded"
                   />
                 </div>
-                {errors.lock && <div className="text-red-500 text-xs mt-1">ช่วง: {errors.lock}</div>}
+                {errors.lock && <div className="text-red-500 text-xs mt-1"> {errors.lock}</div>}
               </div>
 
               {/* STOCK */}
@@ -217,7 +229,7 @@ export default function App() {
                     onChange={handleChange}
                     onKeyDown={preventDecimal}
                     className={`w-full p-2 border rounded ${errors.stock ? "border-red-400" : ""}`}
-                    placeholder="1-70"
+                    placeholder="1-80"
                   />
                   <input
                     type="number"
@@ -228,7 +240,7 @@ export default function App() {
                     className="w-24 p-2 border rounded"
                   />
                 </div>
-                {errors.stock && <div className="text-red-500 text-xs mt-1">ช่วง: {errors.stock}</div>}
+                {errors.stock && <div className="text-red-500 text-xs mt-1"> {errors.stock}</div>}
               </div>
 
               {/* BARREL */}
@@ -256,7 +268,7 @@ export default function App() {
                     className="w-24 p-2 border rounded"
                   />
                 </div>
-                {errors.barrel && <div className="text-red-500 text-xs mt-1">ช่วง: {errors.barrel}</div>}
+                {errors.barrel && <div className="text-red-500 text-xs mt-1"> {errors.barrel}</div>}
               </div>
             </div>
 
@@ -268,7 +280,7 @@ export default function App() {
                   disabled
                   value={showCalculated ? calculatedValues.sales.toLocaleString() : ""}
                   className="w-full p-2 border rounded bg-gray-200 mt-1"
-                  placeholder="กดปุ่มคำนวณเพื่อดูผลลัพธ์"
+                  placeholder=""
                 />
               </div>
 
@@ -278,7 +290,7 @@ export default function App() {
                   disabled
                   value={showCalculated ? calculatedValues.commission.toLocaleString() : ""}
                   className="w-full p-2 border rounded bg-gray-200 mt-1"
-                  placeholder="กดปุ่มคำนวณเพื่อดูผลลัพธ์"
+                  placeholder=""
                 />
               </div>
 
@@ -288,7 +300,7 @@ export default function App() {
                   disabled
                   value={showCalculated ? calculatedValues.total.toLocaleString() : ""}
                   className="w-full p-2 border rounded bg-gray-200 mt-1"
-                  placeholder="กดปุ่มคำนวณเพื่อดูผลลัพธ์"
+                  placeholder=""
                 />
               </div>
             </div>
@@ -330,7 +342,7 @@ export default function App() {
 
       {/* History Modal */}
       {showHistory && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50">
           <div className="bg-white rounded-lg p-6 w-full max-w-3xl max-h-[70vh] overflow-auto shadow-xl mx-4">
             <h3 className="text-lg font-semibold mb-4">ประวัติการคำนวณ</h3>
 
@@ -387,7 +399,7 @@ export default function App() {
 
       {/* Clear History Confirm Modal */}
       {showClearConfirm && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50">
           <div className="bg-white rounded-lg p-6 w-full max-w-md shadow-xl mx-4">
             <h3 className="text-lg font-semibold mb-4">ยืนยันการล้างประวัติ</h3>
             <p className="text-sm text-gray-600 mb-6">
