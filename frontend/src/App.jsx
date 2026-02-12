@@ -49,9 +49,9 @@ export default function App() {
   const validate = () => {
     const e = {};
     if (!form.name.trim()) e.name = "กรุณากรอกชื่อพนักงาน";
-    if (form.stock !== "" && (form.stock < 1 || form.stock > 80)) e.stock = "1-80";
-    if (form.lock !== "" && (form.lock < 1 || form.lock > 70)) e.lock = "1-70";
-    if (form.barrel !== "" && (form.barrel < 1 || form.barrel > 90)) e.barrel = "1-90";
+    if (form.stock !== "" && (form.stock < 1 || form.stock > 80)) e.stock = "กรุณากรอกจำนวนระหว่าง: 1-80";
+    if (form.lock !== "" && (form.lock < 1 || form.lock > 70)) e.lock = "กรุณากรอกจำนวนระหว่าง: 1-70";
+    if (form.barrel !== "" && (form.barrel < 1 || form.barrel > 90)) e.barrel = "กรุณากรอกจำนวนระหว่าง: 1-90";
     setErrors(e);
     return Object.keys(e).length === 0;
   };
@@ -109,9 +109,9 @@ export default function App() {
   if (form.barrel === "") e.barrel = "กรุณากรอกจำนวน barrel : 1-90";
 
   // เช็กช่วงค่า (ใช้ของเดิม)
-  if (form.stock !== "" && (form.stock < 1 || form.stock > 80)) e.stock = "กรุณากรอกจำนวนระหว่าง: 1-80";
-  if (form.lock !== "" && (form.lock < 1 || form.lock > 70)) e.lock = "กรุณากรอกจำนวนระหว่าง: 1-70";
-  if (form.barrel !== "" && (form.barrel < 1 || form.barrel > 90)) e.barrel = "กรุณากรอกจำนวนระหว่าง: 1-90";
+  if (form.stock !== "" && (form.stock < 1 || form.stock > 80)) e.stock = "1-80";
+  if (form.lock !== "" && (form.lock < 1 || form.lock > 70)) e.lock = "1-70";
+  if (form.barrel !== "" && (form.barrel < 1 || form.barrel > 90)) e.barrel = "1-90";
 
   setErrors(e);
 
